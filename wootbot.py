@@ -1,12 +1,12 @@
-import requests
+import urllib2
 from bs4 import BeautifulSoup
 from reddit import Reddit
 
 reddit_connection = Reddit(user_agent='wootbot/1.0')
 reddit_connection.login('wootbot', 'password')
 
-r = requests.get('http://www.woot.com')
-soup = BeautifulSoup(r.content)
+r = urllib2.urlopen('http://www.woot.com')
+soup = BeautifulSoup(r.read())
 
 item = soup.find('h2', 'fn').text
 price = soup.find('span', 'price').text
