@@ -1,19 +1,21 @@
 import urllib2
-from bs4 import BeautifulSoup
+import json
+
 from reddit import Reddit
 
 reddit_connection = Reddit(user_agent='wootbot/1.0')
 reddit_connection.login('wootbot', 'password')
 
-r = urllib2.urlopen('http://www.woot.com')
-soup = BeautifulSoup(r.read())
+r = urllib2.urlopen('http://api.woot.com/1/sales/current.json')
+json = json.loads(r.read())
+newest_item = json['sales'][0]
 
-item = soup.find('h2', 'fn').text
-price = soup.find('span', 'price').text
-list_price = soup.find('span', 'list-price').text
-percent_off = soup.find('span', 'percentage').text
+item = newest_item['Title']
+price = newest_item['Price']
+url = newest_item['SaleUrl']
 
 title = '%s - %s' % (item, price)
-text = '%s\n\n%s\n\n%s (%s)' % (item, price, percent_off, list_price)
 
-reddit_connection.submit('woot', title, text)
+print title
+print url
+reddit_connection.submit('woot', title, url=url)
